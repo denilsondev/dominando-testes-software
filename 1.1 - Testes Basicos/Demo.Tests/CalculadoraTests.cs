@@ -11,7 +11,7 @@ namespace Demo.Tests
             var calculadora = new Calculadora();
 
             //Act
-            var resultado = calculadora.Somar(2.2);
+            var resultado = calculadora.Somar(2,2);
 
             //Assert
             Assert.Equal(4, resultado);
