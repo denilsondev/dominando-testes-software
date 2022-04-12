@@ -9,7 +9,7 @@ namespace NerdStore.Vendas.Domain.Tests
     public class PedidoTests
     {
         [Fact(DisplayName = "Adicionar Item Novo PEdido")]
-        [Trait("Categoria", "Pedido Tests")]
+        [Trait("Categoria", "Vendas - Pedido")]
         public void AdicionarItemPedido_NovoPEdido_DeveAtualizarValor()
         {
             //Arrange
@@ -24,7 +24,7 @@ namespace NerdStore.Vendas.Domain.Tests
         }
 
         [Fact(DisplayName = "Adicionar Item pedidos existentes")]
-        [Trait("Categoria", "Pedido Tests")]
+        [Trait("Categoria", "Vendas - Pedido")]
         public void AdicionarItemPedido_NovoPEdido_SeMEsmoProdutoSoAtualizarValoreQuantidade()
         {
             //Arrange
@@ -45,7 +45,7 @@ namespace NerdStore.Vendas.Domain.Tests
         }
 
         [Fact(DisplayName = "Adicionar Item pedido acima de do permitido")]
-        [Trait("Categoria", "Pedido Tests")]
+        [Trait("Categoria", "Vendas - Pedido")]
         public void AdicionarItemPedido_UnidadesAcimaDoPermitido_DeveRetornarException()
         {
             //Arrange
@@ -60,7 +60,7 @@ namespace NerdStore.Vendas.Domain.Tests
         }
 
         [Fact(DisplayName = "Adicionar Item pedido existente acima de do permitido")]
-        [Trait("Categoria", "Pedido Tests")]
+        [Trait("Categoria", "Vendas - Pedido")]
         public void AdicionarItemPedido_ItemExistenteSomaUnidadeAcimaDoPermitido_DeveRetornarException()
         {
             //Arrange
@@ -72,7 +72,7 @@ namespace NerdStore.Vendas.Domain.Tests
 
 
             //Act & Assert
-            Assert.Throws<DomainException>(() => pedido.AdicionarItem(pedidoItem));
+            Assert.Throws<DomainException>(() => pedido.AdicionarItem(pedidoItem2));
 
         }
     }
