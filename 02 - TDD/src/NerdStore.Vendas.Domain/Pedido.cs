@@ -30,23 +30,28 @@ namespace NerdStore.Vendas.Domain
             return _pedidoItems.Any(p => p.ProdutoId == item.ProdutoId);
         }
 
+        private void ValidarPedidoItemInexistente(PedidoItem item)
+        {
+             if(!PedidoItemExistente(item)) throw new DomainException("O item nao existe no pedido");
+        }
+
         private void ValidarQuantidadeItemPermitida(PedidoItem item)
         {
             var quantidadeItems = item.Quantidade;
-            if(PedidoItemExistente(item))
+            if (PedidoItemExistente(item))
             {
                 var itemExistente = _pedidoItems.FirstOrDefault(p => p.ProdutoId == item.ProdutoId);
                 quantidadeItems += itemExistente.Quantidade;
 
-                 if(quantidadeItems + itemExistente.Quantidade > MAX_UNIDADES_ITEM) throw new DomainException($"Maximo de {MAX_UNIDADES_ITEM} unidades por produto ");
+                if (quantidadeItems + itemExistente.Quantidade > MAX_UNIDADES_ITEM) throw new DomainException($"Maximo de {MAX_UNIDADES_ITEM} unidades por produto ");
             }
-            
+
         }
 
         public void AdicionarItem(PedidoItem pedidoItem)
         {
             ValidarQuantidadeItemPermitida(pedidoItem);
-            
+
             if (PedidoItemExistente(pedidoItem))
             {
                 var itemExistente = _pedidoItems.FirstOrDefault(p => p.ProdutoId == pedidoItem.ProdutoId);
@@ -56,6 +61,20 @@ namespace NerdStore.Vendas.Domain
                 _pedidoItems.Remove(itemExistente);
             }
             _pedidoItems.Add(pedidoItem);
+            CalcularValorPedido();
+        }
+
+
+        public void AtualizarItem(PedidoItem pedidoItem)
+        {
+            ValidarPedidoItemInexistente(pedidoItem);
+            ValidarQuantidadeItemPermitida(pedidoItem);
+
+            var itemExistente = PedidoItems.FirstOrDefault(p => p.ProdutoId == pedidoItem.ProdutoId);
+
+            _pedidoItems.Remove(itemExistente);
+            _pedidoItems.Add(pedidoItem);
+
             CalcularValorPedido();
         }
 
@@ -93,7 +112,7 @@ namespace NerdStore.Vendas.Domain
 
         public PedidoItem(Guid produtoId, string produtoNome, int quantidade, decimal valorUnitario)
         {
-            if(quantidade < Pedido.MIN_UNIDADES_ITEM) throw new DomainException($"Mínimo de {Pedido.MIN_UNIDADES_ITEM} unidades por produto ");
+            if (quantidade < Pedido.MIN_UNIDADES_ITEM) throw new DomainException($"Mínimo de {Pedido.MIN_UNIDADES_ITEM} unidades por produto ");
             ProdutoId = produtoId;
             ProdutoNome = produtoNome;
             Quantidade = quantidade;
