@@ -178,7 +178,6 @@ namespace NerdStore.Vendas.Domain.Tests
             // Act
             pedido.RemoverItem(pedidoItem1);
 
-
             // Assert
             Assert.Equal(totalPedido, pedido.ValorTotal);
 
