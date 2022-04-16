@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentValidation.Results;
 using NerdStore.Core.DomainObjects;
 
 namespace NerdStore.Vendas.Domain
@@ -14,11 +15,56 @@ namespace NerdStore.Vendas.Domain
             _pedidoItems = new List<PedidoItem>();
 
         }
+
+        public bool VoucherUtilizado { get; private set; }
+        public Voucher Voucher { get; private set; }
+        public decimal Desconto { get; private set; }
         public Guid ClienteId { get; set; }
         public PedidoStatus PedidoStatus { get; set; }
         public decimal ValorTotal { get; private set; }
         private readonly List<PedidoItem> _pedidoItems;
         public IReadOnlyCollection<PedidoItem> PedidoItems => _pedidoItems;
+
+        public ValidationResult AplicarVoucher(Voucher voucher)
+        {
+            var result = voucher.ValidarSeAplicavel();
+            if (!result.IsValid) return result;
+
+            Voucher = voucher;
+            VoucherUtilizado = true;
+
+            CalcularValorTotalDesconto();
+
+            return result;
+        }
+
+        public void CalcularValorTotalDesconto()
+        {
+            if (!VoucherUtilizado) return;
+
+            decimal desconto = 0;
+            var valor = ValorTotal;
+
+            if (Voucher.TipoDescontoVoucher == TipoDescontoVoucher.Valor)
+            {
+                if (Voucher.ValorDesconto.HasValue)
+                {
+                    desconto = Voucher.ValorDesconto.Value;
+                    valor -= desconto;
+                }
+            }
+            else
+            {
+                if (Voucher.PercentualDesconto.HasValue)
+                {
+                    desconto = (ValorTotal * Voucher.PercentualDesconto.Value) / 100;
+                    valor -= desconto;
+                }
+            }
+
+            ValorTotal = valor < 0 ? 0 : valor;
+            Desconto = desconto;
+        }
 
         private void CalcularValorPedido()
         {
@@ -81,6 +127,7 @@ namespace NerdStore.Vendas.Domain
         public void RemoverItem(PedidoItem pedidoItem)
         {
             ValidarPedidoItemInexistente(pedidoItem);
+             _pedidoItems.Remove(pedidoItem);
             CalcularValorPedido();
         }
 

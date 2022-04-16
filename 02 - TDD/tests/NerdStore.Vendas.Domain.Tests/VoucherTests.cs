@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Xunit;
 
 namespace NerdStore.Vendas.Domain.Tests
@@ -72,10 +74,5 @@ namespace NerdStore.Vendas.Domain.Tests
             Assert.Contains(VoucherAplicavelValidation.UtilizadoErroMsg, result.Errors.Select(c => c.ErrorMessage));
             Assert.Contains(VoucherAplicavelValidation.PercentualDescontoErroMsg, result.Errors.Select(c => c.ErrorMessage));
         }
-
-
-
-
-
     }
 }

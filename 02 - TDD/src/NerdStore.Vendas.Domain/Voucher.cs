@@ -89,6 +89,5 @@ namespace NerdStore.Vendas.Domain
         {
             return dataValidade >= DateTime.Now;
         }
-
     }
 }
