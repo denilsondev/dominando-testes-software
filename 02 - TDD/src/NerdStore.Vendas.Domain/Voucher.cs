@@ -1,5 +1,5 @@
 using System;
-using fluentvalidation;
+using FluentValidation;
 using FluentValidation.Results;
 
 namespace NerdStore.Vendas.Domain
