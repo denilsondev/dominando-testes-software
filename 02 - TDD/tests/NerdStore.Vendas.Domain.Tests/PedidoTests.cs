@@ -23,8 +23,7 @@ namespace NerdStore.Vendas.Domain.Tests
             Assert.Equal(200, pedido.ValorTotal);
         }
 
-        [Fact(DisplayName = "Adicionar Item pedidos existentes")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void AdicionarItemPedido_NovoPEdido_SeMEsmoProdutoSoAtualizarValoreQuantidade()
         {
             //Arrange
@@ -44,8 +43,7 @@ namespace NerdStore.Vendas.Domain.Tests
 
         }
 
-        [Fact(DisplayName = "Adicionar Item pedido acima de do permitido")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void AdicionarItemPedido_UnidadesAcimaDoPermitido_DeveRetornarException()
         {
             //Arrange
@@ -59,8 +57,7 @@ namespace NerdStore.Vendas.Domain.Tests
 
         }
 
-        [Fact(DisplayName = "Adicionar Item pedido existente acima de do permitido")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void AdicionarItemPedido_ItemExistenteSomaUnidadeAcimaDoPermitido_DeveRetornarException()
         {
             //Arrange
@@ -77,8 +74,7 @@ namespace NerdStore.Vendas.Domain.Tests
         }
 
 
-        [Fact(DisplayName = "Atualizar Item Pedido Inexistente")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void AtualizarItemPedido_ItemNaoExisteNaLista_DeveRetornarException()
         {
             //Arrange
@@ -90,8 +86,7 @@ namespace NerdStore.Vendas.Domain.Tests
 
         }
 
-        [Fact(DisplayName = "Atualizar Item Pedido Valido")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void AtualizarItemPedido_ItemValido_DeveAtualizarQuantidade()
         {
             // Arrange
@@ -110,8 +105,7 @@ namespace NerdStore.Vendas.Domain.Tests
 
         }
 
-        [Fact(DisplayName = "Atualizar Item Pedido Validar Total")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void AtualizarItemPedido_PedidoComProdutosDiferentes_DeveAtualizarValorTotal()
         {
             // Arrange
@@ -133,8 +127,7 @@ namespace NerdStore.Vendas.Domain.Tests
             Assert.Equal(totalPedido, pedido.ValorTotal);
         }
 
-        [Fact(DisplayName = "Atualizar Item Pedido Quantidade acima do permitido")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void AtualizarItemPedido_ItemUnidadesAcimaDoPermitido_DeveRetornarException()
         {
             // Arrange
@@ -149,8 +142,7 @@ namespace NerdStore.Vendas.Domain.Tests
             Assert.Throws<DomainException>(() => pedido.AtualizarItem(pedidoItemAtualizado));
         }
 
-        [Fact(DisplayName = "Remover Item Pedido Inexistente")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void RemoverItemPedido_ItemNAoExisteNaLista_DeveRetornarException()
         {
             //Arrange
@@ -161,8 +153,7 @@ namespace NerdStore.Vendas.Domain.Tests
             Assert.Throws<DomainException>(() => pedido.RemoverItem(pedidoItemRemover));
         }
 
-        [Fact(DisplayName = "Remover Item Pedido Deve Calcular Valor Total")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void RemoverItemPedido_ItemExistente_DeveAtualizarValorTotal()
         {
             // Arrange
@@ -185,8 +176,7 @@ namespace NerdStore.Vendas.Domain.Tests
         }
 
 
-        [Fact(DisplayName = "Aplicar voucher válido")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void Pedido_AplicarVoucherValido_DeveRetornarSemErros()
         {
             // Arrange
@@ -201,8 +191,7 @@ namespace NerdStore.Vendas.Domain.Tests
             Assert.True(result.IsValid);
         }
 
-        [Fact(DisplayName = "Aplicar voucher Inválido")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void Pedido_AplicarVoucherInvalido_DeveRetornarComErros()
         {
             // Arrange
@@ -217,8 +206,7 @@ namespace NerdStore.Vendas.Domain.Tests
             Assert.False(result.IsValid);
         }
 
-        [Fact(DisplayName = "Aplicar voucher tipo valor desconto")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void AplicarVoucher_VoucherTipoValorDesconto_DeveDescontarDoValorTotal()
         {
             // Arrange
@@ -241,8 +229,7 @@ namespace NerdStore.Vendas.Domain.Tests
             Assert.Equal(valorComDesconto, pedido.ValorTotal);
         }
 
-        [Fact(DisplayName = "Aplicar voucher tipo percentual desconto")]
-        [Trait("Categoria", "Vendas - Pedido")]
+        [Fact]
         public void AplicarVoucher_VoucherTipoPercentualDesconto_DeveDescontarDoValorTotal()
         {
             // Arrange
@@ -264,6 +251,47 @@ namespace NerdStore.Vendas.Domain.Tests
 
             // Assert
             Assert.Equal(valorTotalComDesconto, pedido.ValorTotal);
+        }
+
+        [Fact]
+        public void AplicarVoucher_DescontoExcedeValorTotalPedido_PedidoDeveTerValorZero()
+        {
+            // Arrange
+            var pedido = Pedido.PedidoFactory.NovoPedidoRascunho(Guid.NewGuid());
+
+            var pedidoItem1 = new PedidoItem(Guid.NewGuid(), "Produto Xpto", 2, 100);
+            pedido.AdicionarItem(pedidoItem1);
+
+            var voucher = new Voucher("PROMO-15-OFF", null, 300, 1,
+                TipoDescontoVoucher.Valor, DateTime.Now.AddDays(10), true, false);
+
+            // Act
+            pedido.AplicarVoucher(voucher);
+
+            // Assert
+            Assert.Equal(0, pedido.ValorTotal);
+        }
+
+        [Fact]
+        public void AplicarVoucher_ModificarItensPedido_DeveCalcularDescontoValorTotal()
+        {
+            // Arrange
+            var pedido = Pedido.PedidoFactory.NovoPedidoRascunho(Guid.NewGuid());
+            var pedidoItem1 = new PedidoItem(Guid.NewGuid(), "Produto Xpto", 2, 100);
+            pedido.AdicionarItem(pedidoItem1);
+
+            var voucher = new Voucher("PROMO-15-OFF", null, 50, 1,
+                TipoDescontoVoucher.Valor, DateTime.Now.AddDays(10), true, false);
+            pedido.AplicarVoucher(voucher);
+
+            var pedidoItem2 = new PedidoItem(Guid.NewGuid(), "Produto Teste", 4, 25);
+
+            // Act
+            pedido.AdicionarItem(pedidoItem2);
+
+            // Assert
+            var totalEsperado = pedido.PedidoItems.Sum(i => i.Quantidade * i.ValorUnitario) - voucher.ValorDesconto;
+            Assert.Equal(totalEsperado, pedido.ValorTotal);
         }
     }
 }
