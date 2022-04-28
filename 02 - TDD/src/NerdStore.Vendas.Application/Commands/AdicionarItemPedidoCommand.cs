@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentValidation;
 using NerdStore.Core.Messages;
-using NerdStore.Vendas.Domain;using NerdStore.Vendas.Domain;
+using NerdStore.Vendas.Domain;
 
 namespace NerdStore.Vendas.Application.Commands
 {

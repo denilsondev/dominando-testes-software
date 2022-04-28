@@ -4,7 +4,7 @@ using System.Linq;
 using NerdStore.Vendas.Application.Commands;
 using Xunit;
 
-namespace NerdStore.Vendas.Application.Tests
+namespace NerdStore.Vendas.Application.Tests.Pedidos
 {
     public class AdicionarItemPedidoCommandTests
     {
