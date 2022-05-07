@@ -61,7 +61,7 @@ namespace NerdStore.Vendas.Application.Commands
 
         private bool ValidarComando(Command message)
         {
-             if(!message.EhValido()) return true;
+             if(message.EhValido()) return true;
             {
                 foreach( var error in message.ValidationResult.Errors)
                 {
