@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using NerdStore.Core.DomainObjects;
 using NerdStore.Core.Messages;
+using NerdStore.Core.Messages.CommonMessages.Notifications;
 using NerdStore.Vendas.Application.Events;
 using NerdStore.Vendas.Domain;
 
